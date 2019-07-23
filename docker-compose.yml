@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass9999
+      MYSQL_DATABASE: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: rootpass9999
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/data:/var/lib/mysql
+    networks:
+      - backend
+  web:
+    build: ./docker/apache
+    depends_on:
+      - db
+    volumes:
+      - ./app/:/var/www/html/
+      - ./docker/apache/logs/:/var/log/apache2/
+      #- ./docker/php/:/usr/local/etc/php/
+      #- ./docker/apache/vhost.conf:/etc/apache2/sites-enabled/
+    ports:
+      - "8100:80"
+    stdin_open: true
+    tty: true
+    networks:
+      - backend
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+    - db
+    external_links:
+    - db:mysql
+    ports:
+    - "9191:80"
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: rootpass9999
+      MYSQL_ROOT_PASSWORD: rootpass9999
+      PMA_HOST: db
+networks:
+  backend:

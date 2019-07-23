@@ -1,0 +1,4 @@
+.DS_Store
+/app/*
+/docker/data/*
+/docker/apache/logs/*
